@@ -481,7 +481,7 @@ void exchangeStateVectors(Qureg qureg, int pairRank){
 	double t2 = MPI_Wtime();
 	int rank;
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	printf("pid = %d, pairRank = %d, time = %12.6fs\n", rank, pairRank, t2 - t1);
+	//printf("pid = %d, pairRank = %d, time = %12.6fs\n", rank, pairRank, t2 - t1);
 }
 
 void exchangePairStateVectorHalves(Qureg qureg, int pairRank){
@@ -829,7 +829,7 @@ void statevec_compactUnitary(Qureg qureg, const int targetQubit, Complex alpha, 
     int rankIsUpper;
     int pairRank; // rank of corresponding chunk
 
-    if (useLocalDataOnly){
+	if (useLocalDataOnly){
         // all values required to update state vector lie in this rank
         statevec_compactUnitaryLocal(qureg, targetQubit, alpha, beta);
     } else {
@@ -905,7 +905,7 @@ void statevec_controlledCompactUnitary(Qureg qureg, const int controlQubit, cons
     int rankIsUpper;
     int pairRank; // rank of corresponding chunk
 
-    if (useLocalDataOnly){
+	if (useLocalDataOnly){
         // all values required to update state vector lie in this rank
         statevec_controlledCompactUnitaryLocal(qureg, controlQubit, targetQubit, alpha, beta);
     } else {
@@ -1021,7 +1021,7 @@ void statevec_pauliX(Qureg qureg, const int targetQubit)
     int rankIsUpper;
     int pairRank; // rank of corresponding chunk
 
-    if (useLocalDataOnly){
+	if (useLocalDataOnly){
         // all values required to update state vector lie in this rank
         statevec_pauliXLocal(qureg, targetQubit);
     } else {
@@ -1046,7 +1046,7 @@ void statevec_controlledNot(Qureg qureg, const int controlQubit, const int targe
     int rankIsUpper; 	// rank's chunk is in upper half of block 
     int pairRank; 		// rank of corresponding chunk
 
-    if (useLocalDataOnly){
+	if (useLocalDataOnly){
         // all values required to update state vector lie in this rank
         statevec_controlledNotLocal(qureg, controlQubit, targetQubit);
     } else {
@@ -1077,7 +1077,7 @@ void statevec_pauliY(Qureg qureg, const int targetQubit)
     int rankIsUpper;	// rank's chunk is in upper half of block 
     int pairRank; 		// rank of corresponding chunk
 
-    if (useLocalDataOnly){
+	if (useLocalDataOnly){
         statevec_pauliYLocal(qureg, targetQubit, conjFac);
     } else {
         // need to get corresponding chunk of state vector from other rank
@@ -1127,7 +1127,7 @@ void statevec_controlledPauliY(Qureg qureg, const int controlQubit, const int ta
     int rankIsUpper; 	// rank's chunk is in upper half of block 
     int pairRank; 		// rank of corresponding chunk
 
-    if (useLocalDataOnly){
+	if (useLocalDataOnly){
         // all values required to update state vector lie in this rank
         statevec_controlledPauliYLocal(qureg, controlQubit, targetQubit, conjFac);
     } else {
@@ -1193,7 +1193,7 @@ void statevec_hadamard(Qureg qureg, const int targetQubit)
     int rankIsUpper;
     int pairRank; // rank of corresponding chunk
 
-    if (useLocalDataOnly){
+	if (useLocalDataOnly){
         // all values required to update state vector lie in this rank
         statevec_hadamardLocal(qureg, targetQubit);
     } else {

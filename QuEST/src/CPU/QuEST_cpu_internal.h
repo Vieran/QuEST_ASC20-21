@@ -126,6 +126,4 @@ void statevec_collapseToKnownProbOutcomeDistributedRenorm (Qureg qureg, const in
 void statevec_collapseToOutcomeDistributedSetZero(Qureg qureg);
 
 
-
-
 # endif // QUEST_CPU_INTERNAL_H

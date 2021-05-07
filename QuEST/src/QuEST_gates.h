@@ -19,6 +19,7 @@ typedef struct GateObject {
     // others
     void (*func)(struct GateObject*);
     void (*func2)(struct GateObject*, const int64_t);
+	void (*func3)(struct GateObject*, const int64_t);
     struct GateObject* next;
 } GateObject;
 
@@ -26,6 +27,7 @@ typedef struct GateObject {
 typedef struct QuregExt {
     int firstrun;
     int chunkWidth;
+	int exchanged;
     qreal proboutcome[65];
     struct GateObject *head, *last;
 } QuregExt;

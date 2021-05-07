@@ -25,6 +25,30 @@ const int64_t numTasks = CACHE_SIZE >> 1;
 
 #define controlBlockSize(g) (1LL << g->controlQubit)
 
+//------------------------------------ copy some tool functions
+static int chunkIsUpper(int chunkId, long long int chunkSize, int targetQubit)
+{       
+    long long int sizeHalfBlock = 1LL << (targetQubit);
+    long long int sizeBlock = sizeHalfBlock*2;
+    long long int posInBlock = (chunkId*chunkSize) % sizeBlock;
+    return posInBlock<sizeHalfBlock;
+}
+static int getChunkPairId(int chunkIsUpper, int chunkId, long long int chunkSize, int targetQubit)
+{
+    long long int sizeHalfBlock = 1LL << (targetQubit);
+    int chunksPerHalfBlock = sizeHalfBlock/chunkSize;
+    if (chunkIsUpper){
+        return chunkId + chunksPerHalfBlock;
+    } else {
+        return chunkId - chunksPerHalfBlock;
+    }
+}
+static int extractBit (const int locationOfBitFromRight, const long long int theEncodedNumber)
+{
+    return (theEncodedNumber & ( 1LL << locationOfBitFromRight )) >> locationOfBitFromRight;
+}
+//------------------------------------ copy some tool functions
+
 
 static void hadamardCache(GateObject *g, const int64_t cacheid)
 {
@@ -390,4 +414,4 @@ static void controlledRotateZCache(GateObject *g, const int64_t cacheid)
 }
 #endif
 
-#endif //QUEST_CACHE_H
+#endif //QUEST_DISTRIBUTE_CACHE_H

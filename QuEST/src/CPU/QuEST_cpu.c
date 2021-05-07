@@ -2553,9 +2553,6 @@ void statevec_controlledPauliYDistributed (Qureg qureg, const int controlQubit, 
 
 
 
-
-
-
 void statevec_hadamardLocal(Qureg qureg, const int targetQubit)
 {
     long long int sizeBlock, sizeHalfBlock;
@@ -3169,5 +3166,3 @@ void statevec_collapseToOutcomeDistributedSetZero(Qureg qureg)
         }
     }
 }
-
-

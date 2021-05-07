@@ -9,6 +9,7 @@
 # include "QuEST_precision.h"
 # include "QuEST_validation.h"
 # include "mt19937ar.h"
+#include "QuEST_gates.h"
 
 # include <unistd.h>
 # include <sys/types.h> 
@@ -203,35 +204,35 @@ void statevec_pauliZ(Qureg qureg, const int targetQubit) {
     Complex term; 
     term.real = -1;
     term.imag =  0;
-    statevec_phaseShiftByTerm(qureg, targetQubit, term);
+	statevec_phaseShiftByTerm(qureg, targetQubit, term);
 }
 
 void statevec_sGate(Qureg qureg, const int targetQubit) {
     Complex term; 
     term.real = 0;
     term.imag = 1;
-    statevec_phaseShiftByTerm(qureg, targetQubit, term);
+	statevec_phaseShiftByTerm(qureg, targetQubit, term);
 } 
 
 void statevec_tGate(Qureg qureg, const int targetQubit) {
     Complex term; 
     term.real = 1/sqrt(2);
     term.imag = 1/sqrt(2);
-    statevec_phaseShiftByTerm(qureg, targetQubit, term);
+	statevec_phaseShiftByTerm(qureg, targetQubit, term);
 }
 
 void statevec_sGateConj(Qureg qureg, const int targetQubit) {
     Complex term; 
     term.real =  0;
     term.imag = -1;
-    statevec_phaseShiftByTerm(qureg, targetQubit, term);
+	statevec_phaseShiftByTerm(qureg, targetQubit, term);
 } 
 
 void statevec_tGateConj(Qureg qureg, const int targetQubit) {
     Complex term; 
     term.real =  1/sqrt(2);
     term.imag = -1/sqrt(2);
-    statevec_phaseShiftByTerm(qureg, targetQubit, term);
+	statevec_phaseShiftByTerm(qureg, targetQubit, term);
 }
 
 void statevec_rotateX(Qureg qureg, const int rotQubit, qreal angle){
