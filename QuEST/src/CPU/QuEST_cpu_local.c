@@ -9,6 +9,7 @@
 # include "QuEST_internal.h"
 # include "QuEST_precision.h"
 # include "mt19937ar.h"
+# include "QuEST_gates.h"
 
 # include "QuEST_cpu_internal.h"
 
@@ -267,7 +268,8 @@ void statevec_controlledNot(Qureg qureg, const int controlQubit, const int targe
 qreal statevec_calcProbOfOutcome(Qureg qureg, const int measureQubit, int outcome)
 {
     qreal stateProb=0;
-    stateProb = statevec_findProbabilityOfZeroLocal(qureg, measureQubit);
+    //stateProb = statevec_findProbabilityOfZeroLocal(qureg, measureQubit);
+    stateProb = qureg.ext->proboutcome[measureQubit];
     if (outcome==1) stateProb = 1.0 - stateProb;
     return stateProb;
 }

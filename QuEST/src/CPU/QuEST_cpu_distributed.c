@@ -9,6 +9,7 @@
 # include "QuEST_internal.h"
 # include "QuEST_precision.h"
 # include "mt19937ar.h"
+# include "QuEST_gates.h"
 
 # include "QuEST_cpu_internal.h"
 
@@ -449,6 +450,7 @@ void densmatr_initPureState(Qureg targetQureg, Qureg copyQureg) {
 
 
 void exchangeStateVectors(Qureg qureg, int pairRank){
+	double t1 = MPI_Wtime();
     // MPI send/receive vars
     int TAG=100;
     MPI_Status status;
@@ -476,6 +478,10 @@ void exchangeStateVectors(Qureg qureg, int pairRank){
                 &qureg.pairStateVec.imag[offset], maxMessageCount, MPI_QuEST_REAL,
                 pairRank, TAG, MPI_COMM_WORLD, &status);
     }
+	double t2 = MPI_Wtime();
+	int rank;
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	printf("pid = %d, pairRank = %d, time = %12.6fs\n", rank, pairRank, t2 - t1);
 }
 
 void exchangePairStateVectorHalves(Qureg qureg, int pairRank){
@@ -1238,10 +1244,12 @@ qreal statevec_calcProbOfOutcome(Qureg qureg, const int measureQubit, int outcom
     qreal stateProb=0, totalStateProb=0;
     int skipValuesWithinRank = halfMatrixBlockFitsInChunk(qureg.numAmpsPerChunk, measureQubit);
     if (skipValuesWithinRank) {
-        stateProb = statevec_findProbabilityOfZeroLocal(qureg, measureQubit);
+        // stateProb = statevec_findProbabilityOfZeroLocal(qureg, measureQubit);
+        stateProb = qureg.ext->proboutcome[measureQubit];
     } else {
         if (!isChunkToSkipInFindPZero(qureg.chunkId, qureg.numAmpsPerChunk, measureQubit)){
-            stateProb = statevec_findProbabilityOfZeroDistributed(qureg, measureQubit);
+            // stateProb = statevec_findProbabilityOfZeroDistributed(qureg, measureQubit);
+            stateProb = qureg.ext->proboutcome[qureg.ext->chunkWidth];
         } else stateProb = 0;
     }
     MPI_Allreduce(&stateProb, &totalStateProb, 1, MPI_QuEST_REAL, MPI_SUM, MPI_COMM_WORLD);

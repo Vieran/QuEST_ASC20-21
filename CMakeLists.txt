@@ -11,7 +11,7 @@ project(QuEST_Project)
 set(USER_SOURCE  "tutorial_example.c"  CACHE STRING "Source to build with QuEST library")
 set(OUTPUT_EXE   "demo"  CACHE STRING "Executable to compile to")
 
-option(TESTING "Enable test suite functionality -- requires test suite available" ON)
+option(TESTING "Enable test suite functionality -- requires test suite available" OFF)
 set(QuEST_UTIL_DIR_NAME "utilities" CACHE STRING
   "Name of the directory containing the QuEST utilities.")
 
@@ -39,6 +39,7 @@ message(STATUS "Compiling ${USER_SOURCE} to executable ${OUTPUT_EXE}")
 
 # Create user executable
 add_executable(${OUTPUT_EXE} ${USER_SOURCE})
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 
 # Link libraries to user executable, including QuEST library
 target_link_libraries(${OUTPUT_EXE} QuEST m)

@@ -135,18 +135,12 @@ if (GPUACCELERATED)
         -arch=compute_${GPU_COMPUTE_CAPABILITY} -code=sm_${GPU_COMPUTE_CAPABILITY}"
     )
     if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-        set (CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} \
-            -O2"
-        )
+        set (CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -O2")
     endif()
     if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-        set (CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} \
-            -G -g -lineinfo"
-        )
+        set (CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -G -g -lineinfo")
     else()
-        set (CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} \
-            -O2"
-        )
+        set (CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -O2")
     endif()
 endif()
 
@@ -154,15 +148,11 @@ endif()
 # ----- C COMPILER FLAGS --------------------------------------------------
 
 # set C flags that are common between compilers and build types
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} \
-    -std=c99"
-)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 
 # Use -O2 for all but debug mode by default 
 if (NOT("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} \
-        -O2"
-    )
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2")
 endif()
 
 # Set c flags for release
@@ -179,14 +169,10 @@ set(CMAKE_C_FLAGS_DEBUG
 # set C compiler flags based on compiler type
 if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
   # using Clang
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} \
-    -mavx -Wall"
-  )
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mavx -Wall")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
   # using GCC
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} \
-    -mavx -Wall"
-  )
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mavx -Wall")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
   # using Intel
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} \
@@ -199,15 +185,11 @@ endif()
 # ----- C++ COMPILER FLAGS --------------------------------------------------
 
 # set C++ flags that are common between compilers and build types
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
-    -std=c++98 -Wall"
-)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -Wall")
 
 # Use -O2 for all but debug mode by default 
 if (NOT("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
-    set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} \
-        -O2"
-    )
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
 endif()
 
 # Set c++ flags for release
@@ -223,18 +205,14 @@ set(CMAKE_CXX_FLAGS_DEBUG
 # set C++ compiler flags based on compiler type
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   # using Clang
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
-    -mavx"
-  )
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   # using GCC
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
-    -mavx"
-  )
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
   # using Intel
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
-    -xAVX -axCORE-AVX2 -diag-disable -cpu-dispatch"
+    -xAVX -axCORE-AVX2 -diag-disable cpu-dispatch"
   )
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   # using Visual Studio

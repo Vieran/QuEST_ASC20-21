@@ -6,6 +6,7 @@ endif()
 
 set(QuEST_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/QuEST.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/QuEST_gates.c
     ${CMAKE_CURRENT_SOURCE_DIR}/QuEST_common.c
     ${CMAKE_CURRENT_SOURCE_DIR}/QuEST_qasm.c
     ${CMAKE_CURRENT_SOURCE_DIR}/QuEST_validation.c

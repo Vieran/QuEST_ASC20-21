@@ -15,6 +15,7 @@
 # include "QuEST_internal.h"
 # include "QuEST_validation.h"
 # include "QuEST_qasm.h"
+# include "QuEST_gates.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,6 +34,7 @@ Qureg createQureg(int numQubits, QuESTEnv env) {
     qureg.isDensityMatrix = 0;
     qureg.numQubitsRepresented = numQubits;
     qureg.numQubitsInStateVec = numQubits;
+    qureg.ext = init_quregext(&qureg);
     
     qasm_setup(&qureg);
     initZeroState(qureg);
@@ -55,6 +57,7 @@ Qureg createDensityQureg(int numQubits, QuESTEnv env) {
 
 void destroyQureg(Qureg qureg, QuESTEnv env) {
     statevec_destroyQureg(qureg, env);
+    destroy_quregext(qureg.ext);
     qasm_free(qureg);
 }
 
@@ -167,9 +170,11 @@ void cloneQureg(Qureg targetQureg, Qureg copyQureg) {
 void hadamard(Qureg qureg, const int targetQubit) {
     validateTarget(qureg, targetQubit, __func__);
     
-    statevec_hadamard(qureg, targetQubit);
     if (qureg.isDensityMatrix) {
+        statevec_hadamard(qureg, targetQubit);
         statevec_hadamard(qureg, targetQubit+qureg.numQubitsRepresented);
+    } else {
+        register_hadamard(&qureg, targetQubit);
     }
     
     qasm_recordGate(qureg, GATE_HADAMARD, targetQubit);
@@ -178,9 +183,11 @@ void hadamard(Qureg qureg, const int targetQubit) {
 void rotateX(Qureg qureg, const int targetQubit, qreal angle) {
     validateTarget(qureg, targetQubit, __func__);
     
-    statevec_rotateX(qureg, targetQubit, angle);
     if (qureg.isDensityMatrix) {
+        statevec_rotateX(qureg, targetQubit, angle);
         statevec_rotateX(qureg, targetQubit+qureg.numQubitsRepresented, -angle);
+    } else {
+        register_rotateX(&qureg, targetQubit, angle);
     }
     
     qasm_recordParamGate(qureg, GATE_ROTATE_X, targetQubit, angle);
@@ -189,9 +196,11 @@ void rotateX(Qureg qureg, const int targetQubit, qreal angle) {
 void rotateY(Qureg qureg, const int targetQubit, qreal angle) {
     validateTarget(qureg, targetQubit, __func__);
     
-    statevec_rotateY(qureg, targetQubit, angle);
     if (qureg.isDensityMatrix) {
+        statevec_rotateY(qureg, targetQubit, angle);
         statevec_rotateY(qureg, targetQubit+qureg.numQubitsRepresented, angle);
+    } else {
+        register_rotateY(&qureg, targetQubit, angle);
     }
     
     qasm_recordParamGate(qureg, GATE_ROTATE_Y, targetQubit, angle);
@@ -200,9 +209,11 @@ void rotateY(Qureg qureg, const int targetQubit, qreal angle) {
 void rotateZ(Qureg qureg, const int targetQubit, qreal angle) {
     validateTarget(qureg, targetQubit, __func__);
     
-    statevec_rotateZ(qureg, targetQubit, angle);
     if (qureg.isDensityMatrix) {
+        statevec_rotateZ(qureg, targetQubit, angle);
         statevec_rotateZ(qureg, targetQubit+qureg.numQubitsRepresented, -angle);
+    } else {
+        register_rotateZ(&qureg, targetQubit, angle);
     }
     
     qasm_recordParamGate(qureg, GATE_ROTATE_Z, targetQubit, angle);
@@ -211,10 +222,12 @@ void rotateZ(Qureg qureg, const int targetQubit, qreal angle) {
 void controlledRotateX(Qureg qureg, const int controlQubit, const int targetQubit, qreal angle) {
     validateControlTarget(qureg, controlQubit, targetQubit, __func__);
     
-    statevec_controlledRotateX(qureg, controlQubit, targetQubit, angle);
     if (qureg.isDensityMatrix) {
+        statevec_controlledRotateX(qureg, controlQubit, targetQubit, angle);
         int shift = qureg.numQubitsRepresented;
         statevec_controlledRotateX(qureg, controlQubit+shift, targetQubit+shift, -angle);
+    } else {
+        register_controlledRotateX(&qureg, controlQubit, targetQubit, angle);
     }
     
     qasm_recordControlledParamGate(qureg, GATE_ROTATE_X, controlQubit, targetQubit, angle);
@@ -223,10 +236,12 @@ void controlledRotateX(Qureg qureg, const int controlQubit, const int targetQubi
 void controlledRotateY(Qureg qureg, const int controlQubit, const int targetQubit, qreal angle) {
     validateControlTarget(qureg, controlQubit, targetQubit, __func__);
     
-    statevec_controlledRotateY(qureg, controlQubit, targetQubit, angle);
     if (qureg.isDensityMatrix) {
+        statevec_controlledRotateY(qureg, controlQubit, targetQubit, angle);
         int shift = qureg.numQubitsRepresented;
         statevec_controlledRotateY(qureg, controlQubit+shift, targetQubit+shift, angle); // rotateY is real
+    } else {
+        register_controlledRotateY(&qureg, controlQubit, targetQubit, angle);
     }
 
     qasm_recordControlledParamGate(qureg, GATE_ROTATE_Y, controlQubit, targetQubit, angle);
@@ -235,10 +250,12 @@ void controlledRotateY(Qureg qureg, const int controlQubit, const int targetQubi
 void controlledRotateZ(Qureg qureg, const int controlQubit, const int targetQubit, qreal angle) {
     validateControlTarget(qureg, controlQubit, targetQubit, __func__);
     
-    statevec_controlledRotateZ(qureg, controlQubit, targetQubit, angle);
     if (qureg.isDensityMatrix) {
         int shift = qureg.numQubitsRepresented;
+        statevec_controlledRotateZ(qureg, controlQubit, targetQubit, angle);
         statevec_controlledRotateZ(qureg, controlQubit+shift, targetQubit+shift, -angle);
+    } else {
+        register_controlledRotateZ(&qureg, controlQubit, targetQubit, angle);
     }
     
     qasm_recordControlledParamGate(qureg, GATE_ROTATE_Z, controlQubit, targetQubit, angle);
@@ -315,9 +332,11 @@ void controlledCompactUnitary(Qureg qureg, const int controlQubit, const int tar
 void pauliX(Qureg qureg, const int targetQubit) {
     validateTarget(qureg, targetQubit, __func__);
     
-    statevec_pauliX(qureg, targetQubit);
     if (qureg.isDensityMatrix) {
+        statevec_pauliX(qureg, targetQubit);
         statevec_pauliX(qureg, targetQubit+qureg.numQubitsRepresented);
+    } else {
+        register_pauliX(&qureg, targetQubit);
     }
     
     qasm_recordGate(qureg, GATE_SIGMA_X, targetQubit);
@@ -326,9 +345,11 @@ void pauliX(Qureg qureg, const int targetQubit) {
 void pauliY(Qureg qureg, const int targetQubit) {
     validateTarget(qureg, targetQubit, __func__);
     
-    statevec_pauliY(qureg, targetQubit);
     if (qureg.isDensityMatrix) {
+        statevec_pauliY(qureg, targetQubit);
         statevec_pauliYConj(qureg, targetQubit + qureg.numQubitsRepresented);
+    } else {
+        register_pauliY(&qureg, targetQubit);
     }
     
     qasm_recordGate(qureg, GATE_SIGMA_Y, targetQubit);
@@ -337,9 +358,11 @@ void pauliY(Qureg qureg, const int targetQubit) {
 void pauliZ(Qureg qureg, const int targetQubit) {
     validateTarget(qureg, targetQubit, __func__);
     
-    statevec_pauliZ(qureg, targetQubit);
     if (qureg.isDensityMatrix) {
+        statevec_pauliZ(qureg, targetQubit);
         statevec_pauliZ(qureg, targetQubit+qureg.numQubitsRepresented);
+    } else {
+        register_pauliZ(&qureg, targetQubit);
     }
     
     qasm_recordGate(qureg, GATE_SIGMA_Z, targetQubit);
@@ -348,9 +371,11 @@ void pauliZ(Qureg qureg, const int targetQubit) {
 void sGate(Qureg qureg, const int targetQubit) {
     validateTarget(qureg, targetQubit, __func__);
     
-    statevec_sGate(qureg, targetQubit);
     if (qureg.isDensityMatrix) {
+        statevec_sGate(qureg, targetQubit);
         statevec_sGateConj(qureg, targetQubit+qureg.numQubitsRepresented);
+    } else {
+        register_sGate(&qureg, targetQubit);
     }
     
     qasm_recordGate(qureg, GATE_S, targetQubit);
@@ -359,9 +384,11 @@ void sGate(Qureg qureg, const int targetQubit) {
 void tGate(Qureg qureg, const int targetQubit) {
     validateTarget(qureg, targetQubit, __func__);
     
-    statevec_tGate(qureg, targetQubit);
     if (qureg.isDensityMatrix) {
+        statevec_tGate(qureg, targetQubit);
         statevec_tGateConj(qureg, targetQubit+qureg.numQubitsRepresented);
+    } else {
+        register_tGate(&qureg, targetQubit);
     }
     
     qasm_recordGate(qureg, GATE_T, targetQubit);
@@ -407,10 +434,12 @@ void multiControlledPhaseShift(Qureg qureg, int *controlQubits, int numControlQu
 void controlledNot(Qureg qureg, const int controlQubit, const int targetQubit) {
     validateControlTarget(qureg, controlQubit, targetQubit, __func__);
     
-    statevec_controlledNot(qureg, controlQubit, targetQubit);
     if (qureg.isDensityMatrix) {
         int shift = qureg.numQubitsRepresented;
+        statevec_controlledNot(qureg, controlQubit, targetQubit);
         statevec_controlledNot(qureg, controlQubit+shift, targetQubit+shift);
+    } else {
+        register_controlledNot(&qureg, controlQubit, targetQubit);
     }
     
     qasm_recordControlledGate(qureg, GATE_SIGMA_X, controlQubit, targetQubit);
@@ -419,10 +448,12 @@ void controlledNot(Qureg qureg, const int controlQubit, const int targetQubit) {
 void controlledPauliY(Qureg qureg, const int controlQubit, const int targetQubit) {
     validateControlTarget(qureg, controlQubit, targetQubit, __func__);
     
-    statevec_controlledPauliY(qureg, controlQubit, targetQubit);
     if (qureg.isDensityMatrix) {
+        statevec_controlledPauliY(qureg, controlQubit, targetQubit);
         int shift = qureg.numQubitsRepresented;
         statevec_controlledPauliYConj(qureg, controlQubit+shift, targetQubit+shift);
+    } else {
+        register_controlledPauliY(&qureg, controlQubit, targetQubit);
     }
     
     qasm_recordControlledGate(qureg, GATE_SIGMA_Y, controlQubit, targetQubit);
@@ -621,6 +652,7 @@ Complex calcInnerProduct(Qureg bra, Qureg ket) {
 qreal calcProbOfOutcome(Qureg qureg, const int measureQubit, int outcome) {
     validateTarget(qureg, measureQubit, __func__);
     validateOutcome(outcome, __func__);
+    calcOutcome_firstrun(&qureg);
     
     if (qureg.isDensityMatrix)
         return densmatr_calcProbOfOutcome(qureg, measureQubit, outcome);

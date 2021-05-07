@@ -78,8 +78,10 @@ typedef struct Vector
 /** Represents a system of qubits.
  * Qubits are zero-based
  */
+struct QuregExt;
 typedef struct Qureg
 {
+    struct QuregExt *ext;
     //! Whether this instance is a density-state representation
     int isDensityMatrix;
     //! The number of qubits represented in either the state-vector or density matrix
