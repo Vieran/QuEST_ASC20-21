@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# check source filename
+
+[ -z "$1" ] && echo "No source specified." && exit 1
+SOURCEFN="$1"
+case "$SOURCEFN" in
+    random.c)
+        STDSUFF=random
+        ;;
+    GHZ_QFT.c)
+        STDSUFF=GHZ
+        ;;
+esac
+
+
+# check target dir
+
+BUILDDIR=build
+if [ -n "$2" ]; then
+    BUILDDIR="$2"
+fi
+[ -e "$BUILDDIR" ] && echo "Target \`$BUILDDIR\` exists." && exit 1
+mkdir -p "$BUILDDIR"
+
+
+# build
+
+pushd "$BUILDDIR"
+cat >diff.sh <<EOF
+#!/bin/bash
+diff -s probs.dat ../standards/probs.dat_${STDSUFF}
+diff -s stateVector.dat ../standards/stateVector.dat_${STDSUFF}
+EOF
+chmod +x diff.sh
+cmake .. -DUSER_SOURCE="$SOURCEFN" -DVERBOSE_CMAKE=ON -DDISTRIBUTED=1 -DCMAKE_C_FLAGS="-g" # -DCMAKE_C_FLAGS="-DNO_MULTI_PROC_GATE_FUSION"
+echo --------------- cmake done ---------------
+make
+
