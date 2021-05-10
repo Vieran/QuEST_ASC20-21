@@ -449,6 +449,7 @@ void densmatr_initPureState(Qureg targetQureg, Qureg copyQureg) {
 
 
 void exchangeStateVectors(Qureg qureg, int pairRank){
+    printf("START:\texchangeStaeteVectors\n");
     // MPI send/receive vars
     int TAG=100;
     MPI_Status status;
@@ -476,6 +477,7 @@ void exchangeStateVectors(Qureg qureg, int pairRank){
                 &qureg.pairStateVec.imag[offset], maxMessageCount, MPI_QuEST_REAL,
                 pairRank, TAG, MPI_COMM_WORLD, &status);
     }
+    printf("END:\texchangeStaeteVectors\n");
 }
 
 void exchangePairStateVectorHalves(Qureg qureg, int pairRank){
