@@ -22,6 +22,15 @@ static void write_file_l(Qureg *qureg) {
 	for (long long int i=0; i<total_amp; ++i)
 		fprintf(f, "[%ld]\t%12.6f : %12.6f\n", i, qureg->pairStateVec.real[i], qureg->pairStateVec.imag[i]);
 }
+static inline void clear_gate(QuregExt *ext) {
+	GateObject *cur = ext->head;
+	while(cur) {
+		GateObject *tmp = cur;
+		cur = cur->next;
+		free(tmp);
+	}
+	ext->head = ext->last = NULL;
+}
 
 QuregExt* init_quregext(Qureg *q) {
     // normal init
@@ -182,7 +191,7 @@ void calcOutcome_firstrun(Qureg *q) {
             output[maxbits] += val;
         }
     }
-	clear_gate(ext);
+	clear_gate(q->ext);
 }
 
 
@@ -199,15 +208,6 @@ void destroy_quregext(QuregExt *ext) {
 
 // utils
 
-static inline clear_gate(QuregExt *ext) {
-	GateObject *cur = ext->head;
-	while(cur) {
-		GateObject *tmp = cur;
-		cur = cur->next;
-		free(tmp);
-	}
-	ext->head = ext->last = NULL;
-}
 
 static inline GateObject* create_gate_object() {
     return malloc(sizeof(GateObject));
