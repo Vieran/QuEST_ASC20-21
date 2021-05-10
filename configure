@@ -33,7 +33,7 @@ diff -s probs.dat ../standards/probs.dat_${STDSUFF}
 diff -s stateVector.dat ../standards/stateVector.dat_${STDSUFF}
 EOF
 chmod +x diff.sh
-cmake .. -DUSER_SOURCE="$SOURCEFN" -DVERBOSE_CMAKE=ON -DDISTRIBUTED=1 -DCMAKE_C_FLAGS="-g" # -DCMAKE_C_FLAGS="-DNO_MULTI_PROC_GATE_FUSION"
+cmake .. -DUSER_SOURCE="$SOURCEFN" -DVERBOSE_CMAKE=ON -DDISTRIBUTED=1 -DCMAKE_C_FLAGS="-std=c99" # -DCMAKE_C_FLAGS="-DNO_MULTI_PROC_GATE_FUSION"
 echo --------------- cmake done ---------------
 make
 
