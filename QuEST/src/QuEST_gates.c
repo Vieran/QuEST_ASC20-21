@@ -117,9 +117,8 @@ void exchange_half_mem_back(Qureg *q, int targetQubit) {
 }
 
 void calcOutcome_firstrun(Qureg *q) {
-    if (q->ext->firstrun)
-        q->ext->firstrun = 0;
-    else return;
+    if (!(q->ext->head))  // the list is empty
+		return;
     // call handlers
     for (GateObject *cur = q->ext->head; cur; ) {
         if (cur->targetQubit < q->ext->chunkWidth && cur->func2) {
@@ -183,6 +182,7 @@ void calcOutcome_firstrun(Qureg *q) {
             output[maxbits] += val;
         }
     }
+	clear_gate(ext);
 }
 
 
@@ -199,6 +199,15 @@ void destroy_quregext(QuregExt *ext) {
 
 // utils
 
+static inline clear_gate(QuregExt *ext) {
+	GateObject *cur = ext->head;
+	while(cur) {
+		GateObject *tmp = cur;
+		cur = cur->next;
+		free(tmp);
+	}
+	ext->head = ext->last = NULL;
+}
 
 static inline GateObject* create_gate_object() {
     return malloc(sizeof(GateObject));
